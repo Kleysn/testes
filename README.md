@@ -1,4 +1,48 @@
-Aqui está o passo a passo detalhado para instalar o Docker em sua instância EC2 na AWS:
+
+
+## **Passo a Passo Detalhado para Instalar o Docker em Sua Instância EC2 na AWS:**
+
+#### **Erro Comum ao Conectar na Instância EC2: "WARNING: UNPROTECTED PRIVATE KEY FILE!"**
+
+Esse erro ocorre porque o WSL (Windows Subsystem for Linux) ainda interpreta que o arquivo de chave privada (`server-root-key.pem`) tem permissões muito abertas, mesmo após executar o comando `chmod 400`. Isso acontece devido à diferença nas permissões entre o sistema de arquivos do WSL e o sistema de arquivos do Windows.
+
+### **Solução:**
+
+Para corrigir esse problema, você precisa mover o arquivo de chave privada para o sistema de arquivos nativo do WSL, onde as permissões serão tratadas corretamente.
+
+---
+
+1. **Mover o Arquivo para o Sistema Nativo do WSL**
+   
+   No terminal do WSL, copie o arquivo para o sistema de arquivos do WSL (nativo do Linux):
+   
+   ```bash
+   cp /mnt/c/Users/kleitonn/Downloads/server-root-key.pem ~/server-root-key.pem
+   ```
+
+2. **Definir as Permissões Corretas no WSL**
+   
+   Mude para o diretório onde o arquivo foi copiado:
+   
+   ```bash
+   cd ~
+   ```
+
+   Em seguida, defina as permissões corretas para o arquivo da chave privada:
+   
+   ```bash
+   chmod 400 "server-root-key.pem"
+   ```
+
+3. **Conectar-se à Instância EC2**
+   
+   Agora, execute o comando SSH para se conectar à sua instância EC2 na AWS:
+   
+   ```bash
+   ssh -i "server-root-key.pem" ubuntu@ec2-54-167-220-226.compute-1.amazonaws.com
+   ```
+
+---
 
 ---
 
