@@ -99,3 +99,81 @@ Aqui está o passo a passo detalhado para instalar o Docker em sua instância EC
 ---
 
 Agora o Docker está instalado e pronto para uso em sua instância EC2!
+
+--- 
+
+Caso ao rodar o comando ```docker run hello-world ``` retorne o erro a seguir:
+
+``` bash
+
+docker: permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Head "http://%2Fvar%2Frun%2Fdocker.sock/_ping": dial unix /var/run/docker.sock: connect: permission denied.
+
+```
+
+Esse erro ocorre porque o usuário atual (`ubuntu`) não tem permissões para acessar o socket do Docker. Para resolver isso, siga os passos abaixo:
+
+---
+
+### **a): Verificar o Grupo do Docker**
+
+1. O grupo do Docker geralmente é chamado `docker`. Confirme se ele existe:
+   ```bash
+   grep docker /etc/group
+   ```
+
+Se você vir algo como `docker:x:999:`, o grupo existe.
+
+---
+
+### **b): Adicionar o Usuário ao Grupo Docker**
+
+2. Adicione o usuário `ubuntu` ao grupo `docker`:
+   ```bash
+   sudo usermod -aG docker $USER
+   ```
+
+3. Para aplicar a mudança sem reiniciar:
+   ```bash
+   newgrp docker
+   ```
+
+---
+
+### **c): Testar o Docker**
+
+4. Execute novamente o comando de teste:
+   ```bash
+   docker run hello-world
+   ```
+
+Se o comando funcionar, o problema está resolvido!
+
+---
+
+### **d): Garantir que o Docker Seja Iniciado com Permissões**
+
+Se o problema persistir, tente os comandos abaixo para garantir que o serviço Docker esteja rodando com as permissões corretas:
+
+5. Reinicie o serviço Docker:
+   ```bash
+   sudo systemctl restart docker
+   ```
+
+6. Verifique o status do serviço Docker:
+   ```bash
+   sudo systemctl status docker
+   ```
+
+Certifique-se de que ele está ativo e rodando.
+
+---
+
+### **e): Solução Temporária (Usar `sudo`)**
+
+Se você não quiser alterar as permissões do usuário, pode executar os comandos Docker com `sudo`:
+   ```bash
+   sudo docker run hello-world
+   ```
+
+No entanto, é recomendável corrigir as permissões para evitar o uso contínuo de `sudo`.
+
